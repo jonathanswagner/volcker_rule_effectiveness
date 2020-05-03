@@ -1,0 +1,53 @@
+library(MatchIt)
+getwd()
+setwd("/Users/Jona/Desktop/MSBA/DSC5101 - Analytics in Managerial Economics/Assignments/Project 2")
+new_file <- read.csv("DiD_reduced_Q1.csv")
+attach(new_file)
+new_file[1:10,]
+#detach(new_file)
+
+#new_file_na_removed <- na.omit(new_file) 
+
+######Replace all NA values with average######
+#dep_roa1
+new_file$dep_roa1[is.na(new_file$dep_roa1)] <- mean(new_file$dep_roa1, na.rm = T)
+sum(is.na(new_file$dep_roa1))
+
+#dep_leverage
+new_file$dep_leverage[is.na(new_file$dep_leverage)] <- mean(new_file$dep_leverage, na.rm = T)
+sum(is.na(new_file$dep_leverage))
+
+#dep_creditrisk_total3
+new_file$dep_creditrisk_total3[is.na(new_file$dep_creditrisk_total3)] <- mean(new_file$dep_creditrisk_total3, na.rm = T)
+sum(is.na(new_file$dep_creditrisk_total3))
+
+#dep_cir
+new_file$dep_cir[is.na(new_file$dep_cir)] <- mean(new_file$dep_cir, na.rm = T)
+sum(is.na(new_file$dep_cir))
+
+#dep_depositratio
+new_file$dep_depositratio[is.na(new_file$dep_depositratio)] <- mean(new_file$dep_depositratio, na.rm = T)
+sum(is.na(new_file$dep_depositratio))
+
+#dep_loans_REratio
+new_file$dep_loans_REratio[is.na(new_file$dep_loans_REratio)] <- mean(new_file$dep_loans_REratio, na.rm = T)
+sum(is.na(new_file$dep_loans_REratio))
+
+#dep_liquidity
+new_file$dep_liquidity[is.na(new_file$dep_liquidity)] <- mean(new_file$dep_liquidity, na.rm = T)
+sum(is.na(new_file$dep_liquidity))
+########################################################################
+
+summary(new_file)
+#summary(new_file_na_removed)
+
+#create list of variables
+#X <- cbind(dep_roa1, dep_leverage, dep_lnassets, dep_creditrisk_total3, dep_cir, dep_depositratio, dep_loans_REratio, dep_liquidity, dep_cpp_bankquarter)
+
+m.out <- matchit(treat_3_b_avg ~ dep_roa1+dep_leverage+dep_lnassets+dep_creditrisk_total3+dep_cir+dep_depositratio+dep_loans_REratio+dep_liquidity+dep_cpp_bankquarter, data = new_file, method = "nearest", ratio = 3)
+summary(m.out)
+plot(m.out, type = "jitter")
+plot(m.out, type = "hist")
+
+m.data1 <- match.data(m.out)
+write.csv(m.data1, file = "DiD_reduced_matched.csv")
